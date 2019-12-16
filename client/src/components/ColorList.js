@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Route, Redirect } from "react-router-dom";
+import axiosWithAuth from "../axiosWithAuth";
 
 const initialColor = {
   color: "",
   code: { hex: "" }
 };
 
-const ColorList = ({ colors, updateColors }) => {
-  console.log(colors);
+const ColorList = ({ colors, updateColors, props }) => {
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
 
@@ -17,14 +18,32 @@ const ColorList = ({ colors, updateColors }) => {
   };
 
   const saveEdit = e => {
-    e.preventDefault();
+    // e.preventDefault();
     // Make a put request to save your updated color
     // think about where will you get the id from...
     // where is is saved right now?
+    axiosWithAuth()
+      .put(`colors/${colorToEdit.id}`, colorToEdit)
+      .then(res => {
+        // console.log("saving: ", res);
+        // updateColors(res.data);
+        props.history.push("/bubbles/");
+      })
+      .catch(err => {
+        console.log(err.message);
+      });
   };
 
   const deleteColor = color => {
+    console.log("Color to be deleted", color.id);
+    let id = color.id;
     // make a delete request to delete this color
+    axiosWithAuth()
+      .delete(`/colors/${color.id}`)
+      .then(res => {
+        // updateColors(res.data);
+      })
+      .catch(err => console.log(err.message));
   };
 
   return (
@@ -34,12 +53,14 @@ const ColorList = ({ colors, updateColors }) => {
         {colors.map(color => (
           <li key={color.color} onClick={() => editColor(color)}>
             <span>
-              <span className="delete" onClick={e => {
-                    e.stopPropagation();
-                    deleteColor(color)
-                  }
-                }>
-                  x
+              <span
+                className="delete"
+                onClick={e => {
+                  e.stopPropagation();
+                  deleteColor(color);
+                }}
+              >
+                x
               </span>{" "}
               {color.color}
             </span>

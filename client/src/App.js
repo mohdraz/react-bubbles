@@ -3,6 +3,9 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 
 import Login from "./components/Login";
 import "./styles.scss";
+import PrivateRoute from "./PrivateRoute";
+
+import Bubbles from "./components/BubblePage";
 
 function App() {
   return (
@@ -13,6 +16,7 @@ function App() {
           Build a PrivateRoute component that will 
           display BubblePage when you're authenticated 
         */}
+        <PrivateRoute exact path="/bubbles" component={Bubbles} />
       </div>
     </Router>
   );
